@@ -1,0 +1,58 @@
+# 优先出处（会议 / 期刊）清单
+# 检索顺序：tier 1 → tier 2 → tier 3 → 其他出处（报告中按层级分组，并标明出处层级）
+#
+# ⚠ 下面的 venues 只是示例（几个通用 CV/ML 出处），请换成你自己领域认可的出处。
+#   最简单的做法：把你的出处清单（名称 + 层级）发给 AI 助手，说“按 docs/workflows/venues.md 配置出处”。
+#
+# 你只需要提供：name（全称或常用缩写都行）+ tier。
+# 标记为 auto 的字段由工作站自动补全并核对（本地 dblp 库 + OpenAlex），无需手填。
+#
+# 字段说明：
+#   name      全称
+#   short     缩写（CVPR、TPAMI…）
+#   type      conference | journal
+#   tier      1 = 最优先  2 = 次优先  3 = 认可但不优先
+#   dblp      dblp 键，如 conf/cvpr、journals/pami（auto；本地 dblp 库按它筛选）
+#   dblp_venue_regex  可选：只认匹配此正则的 dblp 出处名（auto）。dblp 里 workshop 常与正会
+#                 共用一个键（如 conf/cvpr 下有 'CVPR'、'CVPR Workshops'、'MedSAM@CVPR'），
+#                 用白名单只保留正会；ECCV 等按卷号分册，如 'ECCV (5)'
+#   issn      期刊 ISSN（auto；Crossref / Scopus 按它筛选新论文）
+#   openalex  OpenAlex source ID（auto；用于抓取 dblp 尚未收录的新论文）
+#   openreview  OpenReview venue id，如 ICLR.cc（auto，仅适用的会议）
+#   ccf       CCF 等级 A/B/C（auto，若在 CCF 目录中）
+#   note      备注（可选，比如“只看 oral”“只看某个 track”）
+
+tiers:
+  1: 最优先
+  2: 次优先
+  3: 认可但不优先
+
+# 年份优先级（示例：2024 及以后 > 2021~2023 > 2021 以前，按需修改）
+# 排序：先出处层级，再年份档，最后相关度。第一档不设上限，2027 年以后的论文也算最新档。
+year_priority:
+  - {from: 2024}             # Y1 最新
+  - {from: 2021, to: 2023}   # Y2
+  - {to: 2020}               # Y3 较早
+
+venues:
+  # ---------------- 示例 · tier 1 · 会议 ----------------
+  # fresh: 抓 dblp 尚未收录的新论文时用哪些在线源（OpenAlex 对 LNCS 系列/ICLR/ICML 收录不全）
+  - {short: CVPR,    name: IEEE/CVF Conference on Computer Vision and Pattern Recognition, type: conference, tier: 1,
+     dblp: conf/cvpr, dblp_venue_regex: '^CVPR( \(\d+\))?$', openalex: S4210176548, issn: [1063-6919], fresh: [openalex, arxiv]}
+  - {short: NeurIPS, name: Conference on Neural Information Processing Systems, type: conference, tier: 1,
+     dblp: conf/nips, dblp_venue_regex: '^(NeurIPS|NIPS)( \(\d+\))?$|^NeurIPS Datasets and Benchmarks$', openalex: S4363606243, issn: [1049-5258], openreview: NeurIPS.cc,
+     fresh: [openreview, openalex]}
+  - {short: ICLR,    name: International Conference on Learning Representations, type: conference, tier: 1,
+     dblp: conf/iclr, dblp_venue_regex: '^ICLR( \((Poster|Oral)\))?$', openreview: ICLR.cc, fresh: [openreview]}
+
+  # ---------------- 示例 · tier 1 · 期刊 ----------------
+  - {short: TPAMI, name: IEEE Transactions on Pattern Analysis and Machine Intelligence, type: journal, tier: 1,
+     dblp: journals/pami, openalex: S199944782, issn: [0162-8828], fresh: [openalex, crossref]}
+
+  # ---------------- 示例 · tier 2 ----------------
+  - {short: ECCV,    name: European Conference on Computer Vision, type: conference, tier: 2,
+     dblp: conf/eccv, dblp_venue_regex: '^ECCV( \(\d+\))?$', fresh: [springer, crossref]}
+  - {short: TIP,   name: IEEE Transactions on Image Processing, type: journal, tier: 2,
+     dblp: journals/tip, openalex: S4210173141, issn: [1057-7149], fresh: [openalex, crossref]}
+
+  # ---------------- tier 3：按需添加 ----------------

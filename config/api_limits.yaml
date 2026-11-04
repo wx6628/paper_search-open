@@ -1,0 +1,72 @@
+# API 用量限制配置（工作站所有脚本都会遵守此文件）
+# official_* = 官方限额（2026-11 查证/实测，可能随官方调整）；limit_* = 工作站实际执行的上限 ← 你只需要改这些
+# 原则：limit 建议取官方的 50%～80%，给手动使用和其他工具留余量。
+# per_second = 每秒最多请求数；concurrency = 同时进行的请求数；daily/weekly = 每日/每周总请求数
+
+openalex:                      # 需要 OPENALEX_API_KEY（免费申请）
+  official: {per_second: 30, daily_usd: 1.0}   # 每日 $1 免费额度，UTC 0 点（北京时间 8:00）重置
+  cost_note: "关键词搜索 $0.001/次（≈1000次/天）；筛选列表 $0.0001/次（≈1万次/天）；按 ID/DOI 查单篇免费；PDF 下载 $0.01/次"
+  limit_per_second: 5
+  limit_daily_usd: 0.8          # ≈ 800 次关键词搜索
+  quota_headers: X-RateLimit-Remaining-USD   # 实时剩余额度，脚本会读取
+
+scopus:                        # 预留：脚本暂未调用
+  official:                    # 每周配额，从首次使用起滚动 7 天
+    scopus_search:       {per_second: 9, weekly: 20000}
+    abstract_retrieval:  {per_second: 9, weekly: 10000}
+    sciencedirect_search: {per_second: 2, weekly: 20000}
+    article_retrieval:   {per_second: 10, weekly: 50000}
+  limit_per_second: 3
+  limit_weekly_search: 12000
+  limit_weekly_abstract: 6000
+  quota_headers: X-RateLimit-Remaining
+
+ieee_xplore:                   # 预留：脚本暂未调用
+  official: {per_second: 10, daily: 200}      # 来源：图书馆指南，非 IEEE 官方页面
+  limit_per_second: 1
+  limit_daily: 150
+
+springer_meta:                 # 需要 SPRINGER_META_API_KEY（可选，用于补 Springer 会议摘要）
+  official: {per_minute: "未公开（推测同 OA）", daily: "未公开（推测 500）"}
+  limit_per_minute: 30
+  limit_daily: 300
+
+springer_openaccess:           # 预留
+  official: {per_minute: 100, daily: 500}     # Basic 免费计划
+  limit_per_minute: 30
+  limit_daily: 400
+
+semantic_scholar:              # 预留：脚本暂未调用
+  official: {per_second: 1, daily: "无公开上限"}  # 个人 key 起步 1 RPS，所有接口合计
+  limit_per_second: 1           # 不建议改高：超了会 429，频繁超限可能被收回 key
+  limit_daily: 5000
+
+crossref:                      # 只需邮箱 CROSSREF_MAILTO（polite pool）
+  official: {per_second: 3, concurrency: 3}   # 实测响应头为 3/s（文档写 10/s，以实测为准）
+  limit_per_second: 2
+  limit_concurrency: 1
+
+unpaywall:                     # 只需邮箱 UNPAYWALL_EMAIL
+  official: {daily: 100000}
+  limit_per_second: 2
+  limit_daily: 10000
+
+arxiv:                         # 无需 key
+  official: {min_interval_seconds: 3, concurrency: 1}  # 官方使用条款硬性要求，不可放宽
+  limit_min_interval_seconds: 3
+  limit_concurrency: 1
+
+openreview:                    # 匿名
+  official: "未公开（官方 GitHub issue #459 仍在请求文档）"
+  limit_per_second: 1
+  limit_concurrency: 1
+  note: "按会议列出论文会触发人机验证（challenge），遇到即停止，不重试"
+
+dblp:
+  online: false                # 只用本地数据包，禁止在线请求
+
+# 通用规则（所有源）
+global:
+  on_429: "读取 Retry-After 等待后重试一次；再次 429 则当天停用该源"
+  on_challenge: "人机验证/403 challenge → 立即停用该源，不重试、不绕过"
+  max_retries: 2

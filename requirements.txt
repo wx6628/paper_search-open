@@ -1,0 +1,4 @@
+# Python 3.10+（推荐 3.12）
+lxml>=5.0        # 构建本地 dblp（解析 dblp XML）
+PyYAML>=6.0      # 读取 config/*.yaml
+PyMuPDF>=1.24    # 从 PDF 提取摘要 / 全文（精读）

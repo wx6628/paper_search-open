@@ -1,0 +1,27 @@
+# ---- 个人数据：永远不要提交 ----
+.env
+library/
+data/*
+!data/dblp/
+data/dblp/*
+!data/dblp/dblp.dtd
+reports/
+exports/
+
+# ---- 运行产物 ----
+__pycache__/
+*.pyc
+*.part
+*.sqlite-wal
+*.sqlite-shm
+
+# ---- 可选的本地组件 ----
+web/vendor/
+
+# ---- 系统 / 编辑器 ----
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+.claude/settings.local.json

@@ -1,0 +1,29 @@
+# 种子论文：代表你研究方向的核心论文
+# 用途：
+#   1. 推断研究方向的关键词画像（自动生成 profile.yaml）
+#   2. 作为引用滚雪球（/snowball）的起点
+#   3. 作为检索质量的“标准答案”——检索流程能否找回这些论文，用来评估和调优
+#
+# 你只需提供以下任意一种标识：标题、DOI、arXiv ID、dblp 链接
+# 可选：topic 标签（同一方向的论文用同一个标签，便于分主题检索）
+# 标记为 auto 的字段由工作站自动补全。
+#
+# 字段：
+#   title   标题
+#   doi     DOI（auto）
+#   arxiv   arXiv ID（auto）
+#   dblp    dblp 记录键（auto）
+#   venue   出处（auto）
+#   year    年份（auto）
+#   topic   主题标签（可选）
+#   note    为什么重要（可选）
+
+papers: []
+# 示例（格式参考）：
+#  - title: Attention Is All You Need
+#    doi: 10.48550/arXiv.1706.03762
+#    arxiv: "1706.03762"
+#    dblp: conf/nips/VaswaniSPUJGKP17
+#    venue: NeurIPS
+#    year: 2017
+#    topic: transformer
